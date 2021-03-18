@@ -1,0 +1,6 @@
+---
+Name: iqnection-redirects
+---
+SilverStripe\CMS\Controllers\ContentController:
+  extensions:
+    - IQnection\Redirects\Control\RedirectsController

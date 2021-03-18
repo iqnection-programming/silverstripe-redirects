@@ -1,0 +1,22 @@
+{
+	"name": "iqnection/silverstripe-redirects",
+	"description": "Provides interface for setting up redirects",
+	"type": "silverstripe-module",
+	"keywords": ["iqnection"],
+	"license": "BSD-3-Clause",
+	"authors": [
+        {
+            "name": "IQnection",
+            "homepage": "https://www.iqnection.com"
+        }
+    ],
+	"require": {
+		"silverstripe/cms": "^4.5",
+		"sheadawson/silverstripe-linkable": "^2.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"IQnection\\Redirects\\": "src/"
+		}
+	}
+}
