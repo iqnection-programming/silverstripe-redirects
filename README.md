@@ -6,8 +6,10 @@ Great for setting up 301 redirects when launching a new site with URL changes
 ## Installation
 ```
 $ composer require iqnection/silverstripe-redirects
-$ ~public_html/vendor/bin/sake dev/build
 ```
+
+Run a database rebuild and flush
+https://example.com/dev/build?flush=1
 
 It's strongly suggested to set the environment variable for your main site URL
 In your root .env file and add/update the following
