@@ -11,7 +11,7 @@ class RedirectsController extends Extension
 {
 	public function onAfterInit()
 	{
-		$host = $_SERVER['HTTP_HOST'];
+		$host = Director::host($this->owner->getRequest());
 		$uri = $_SERVER['REQUEST_URI'];
 		// see if we have a domain redirect to follow
 		$isSiteHost = Redirect::isSiteHost($host);

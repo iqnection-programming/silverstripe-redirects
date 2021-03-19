@@ -1,7 +1,7 @@
 {
 	"name": "iqnection/silverstripe-redirects",
 	"description": "Provides interface for setting up redirects",
-	"type": "silverstripe-module",
+	"type": "silverstripe-vendormodule",
 	"keywords": ["iqnection"],
 	"license": "BSD-3-Clause",
 	"authors": [

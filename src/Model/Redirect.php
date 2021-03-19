@@ -70,18 +70,23 @@ class Redirect extends DataObject
 	public function generateMatchUrl()
 	{
 		$relativePath = Director::makeRelative($this->FromPath);
-		$relativePath = current(explode('?',$relativePath));
+
+		list($relativePath, $query) = explode('?',$relativePath);
 		$relativePath = trim($relativePath, ' /');
 		$host = self::getHostName($this->FromPath);
-		if (self::isSiteHost($host))
+		if ( (!$host) || (self::isSiteHost($host)) )
 		{
 			// goal is for final path to be path/to/page
-			$this->MatchURL = $relativePath;
+			$this->MatchURL = '/'.ltrim($relativePath, ' /');
 		}
 		else
 		{
 			// goal is for final path to be //[www.]?example.com/path/to/page
 			$this->MatchURL = '//'.trim($host.'/'.$relativePath, '/');
+		}
+		if (!empty($query))
+		{
+			$this->MatchURL .= '?'.$query;
 		}
 		return $this->MatchURL;
 	}
@@ -114,9 +119,12 @@ class Redirect extends DataObject
 	*/
 	public static function getHostName($url)
 	{
-		$host = preg_replace('/^(https?:)?(\/\/)?/','',$url);	// -> [www.]example.com/path/to/page/?query=1
-		$host = preg_replace('/^([^\/]+)\/.*$/','$1',$host);	// -> example.com
-		return trim($host, ' /');	// safeguard -> example.com
+		if (preg_match('/\./',$url))
+		{
+			$host = preg_replace('/^(https?:)?(\/\/)?/','',$url);	// -> [www.]example.com/path/to/page/?query=1
+			$host = preg_replace('/^([^\/]+)\/.*$/','$1',$host);	// -> example.com
+			return trim($host, ' /');	// safeguard -> example.com
+		}
 	}
 
 	/**
@@ -135,7 +143,7 @@ class Redirect extends DataObject
 		}
 		if (is_null($host))
 		{
-			$host = $_SERVER['HTTP_HOST'];
+			$host = Director::host(Controller::curr()->getRequest());
 		}
 		$host = self::getHostName($host);
 		$host = preg_replace('/^www\./','',$host);
@@ -147,7 +155,7 @@ class Redirect extends DataObject
 	{
 		if (is_null($host))
 		{
-			$host = $_SERVER['HTTP_HOST'];
+			$host = Director::host(Controller::curr()->getRequest());
 		}
 		// if this is the site host, then no redirect should exist
 		if (!self::isSiteHost($host))
@@ -174,16 +182,16 @@ class Redirect extends DataObject
 		if (!self::isSiteHost())
 		{
 			// include the domain in the db query
-			$host = self::getHostName($_SERVER['HTTP_HOST']);
+			$host = Director::host(Controller::curr()->getRequest());
 			$host = preg_replace('/^www\./','',$host);
 			$filters[] = '//'.trim($host.'/'.$requestURI,'/'); // -> //example.com/path/to/page
 			$filters[] = '//www.'.trim($host.'/'.$requestURI,'/'); // -> //www.example.com/path/to/page
 		}
 		else
 		{
-			$filters[] = $requestURI;
+			$filters[] = trim($requestURI, ' /');
+			$filters[] = '/'.trim($requestURI, ' /');
 		}
-
 		return self::get()->Filter('MatchURL', $filters)->First();
 	}
 }
